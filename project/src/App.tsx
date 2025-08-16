@@ -464,7 +464,10 @@ function App() {
                 Buy OILX Now
                 <ChevronRight className="w-5 h-5 ml-2" />
               </button>
-              <button className="border-2 border-slate-400 text-slate-300 px-10 py-4 rounded-full font-bold text-lg hover:border-amber-500 hover:text-amber-400 transition-all duration-200">
+              <button
+                className="border-2 border-slate-400 text-slate-300 px-10 py-4 rounded-full font-bold text-lg hover:border-amber-500 hover:text-amber-400 transition-all duration-200"
+                onClick={() => window.open("https://x.com/oilx_change?s=21")}
+              >
                 Join Community
               </button>
             </div>
@@ -602,7 +605,7 @@ function App() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="https://dex.coinmarketcap.com/token/solana/PqXub2t6A2vvUb3Mevk4uhj339rMhhmxq2HQzYNmoon/"
                     className="hover:text-amber-400 transition-colors"
                   >
                     CoinMarketCap
