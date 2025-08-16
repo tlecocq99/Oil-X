@@ -298,7 +298,7 @@ function App() {
             <div className="grid md:grid-cols-3 gap-8 mb-12">
               <div className="bg-slate-800/50 backdrop-blur-sm border border-amber-500/20 rounded-xl p-6 text-center">
                 <div className="text-3xl font-bold text-amber-400 mb-2">
-                  100M
+                  1.0B
                 </div>
                 <div className="text-slate-300 font-medium mb-2">
                   Total Supply
