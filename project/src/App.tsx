@@ -559,7 +559,7 @@ function App() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="https://x.com/oilx_change?s=21"
                     className="hover:text-amber-400 transition-colors"
                   >
                     Twitter
