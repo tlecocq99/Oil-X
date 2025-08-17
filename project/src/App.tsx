@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TrendingUp,
   Zap,
@@ -16,6 +16,22 @@ import {
 
 function App() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [livePrice, setLivePrice] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchPrice() {
+      try {
+        const res = await fetch("http://localhost:4000/api/price");
+        const data = await res.json();
+        setLivePrice(data.price);
+      } catch (err) {
+        setLivePrice("N/A");
+      }
+    }
+    fetchPrice();
+    const interval = setInterval(fetchPrice, 60000); // update every minute
+    return () => clearInterval(interval);
+  }, []);
 
   const features = [
     {
@@ -135,6 +151,10 @@ function App() {
                 Energy Trading
               </span>
             </h1>
+
+            <h2 className="text-2xl font-bold text-amber-400 mb-4">
+              Live OILX Price: {livePrice ? livePrice : "Loading..."}
+            </h2>
 
             <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
               OILX bridges the gap between traditional energy markets and
