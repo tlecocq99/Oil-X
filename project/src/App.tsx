@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import OilXPriceChart from "./OilXPriceChart";
 import {
   TrendingUp,
   Zap,
@@ -15,7 +16,7 @@ import {
 } from "lucide-react";
 
 function App() {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [] = useState("overview");
   const [livePrice, setLivePrice] = useState<string | null>(null);
 
   useEffect(() => {
@@ -155,6 +156,9 @@ function App() {
             <h2 className="text-2xl font-bold text-amber-400 mb-4">
               Live OILX Price: {livePrice ? livePrice : "Loading..."}
             </h2>
+
+            {/* Live Price Chart */}
+            <OilXPriceChart />
 
             <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
               OILX bridges the gap between traditional energy markets and
