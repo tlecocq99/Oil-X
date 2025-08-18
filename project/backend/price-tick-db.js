@@ -20,6 +20,16 @@ export async function connectMongo() {
 export async function savePriceTick(price, timestamp) {
   const col = await connectMongo();
   await col.insertOne({ price, timestamp });
+  const count = await col.countDocuments();
+  if (count > 500) {
+    const toDelete = await col
+      .find({})
+      .sort({ timestamp: 1 })
+      .limit(count - 500)
+      .toArray();
+    const ids = toDelete.map((doc) => doc._id);
+    await col.deleteMany({ _id: { $in: ids } });
+  }
 }
 
 export async function getRecentPriceTicks(limit = 100) {
