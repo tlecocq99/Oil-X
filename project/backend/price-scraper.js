@@ -8,7 +8,7 @@ app.use(cors());
 
 const PORT = process.env.PORT || 4000;
 const GECKO_URL =
-  "https://api.geckoterminal.com/api/v2/networks/solana/pools/FEhpt1a5HVmD5LKyGAju4vJ9NTbCMdkAQitEF5D3nFqz";
+  "https://api.geckoterminal.com/api/v2/networks/solana/pools/9h7GAGU8T75jdD2uHhFGEMHzCLLDXdgireWZho8jgnKp";
 
 app.get("/api/price", async (req, res) => {
   try {
