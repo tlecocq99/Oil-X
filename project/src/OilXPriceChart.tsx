@@ -28,6 +28,10 @@ ChartJS.register(
 );
 
 function OilXPriceChart() {
+  // PLACEHOLDER / REMINDER:
+  // This component is currently gated in App.tsx behind the env flag VITE_SHOW_CHART.
+  // To display it in the deployed site, set VITE_SHOW_CHART=true (e.g. in .env or build environment).
+  // Keep any experimental changes here; safe to modify without affecting production until flag enabled.
   const [chartData, setChartData] = useState<any>(null);
   const dataRef = useRef<{ labels: string[]; values: number[] }>({
     labels: [],

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+// Chart temporarily disabled for initial deployment. Set VITE_SHOW_CHART=true to enable.
 import OilXPriceChart from "./OilXPriceChart";
 import {
   TrendingUp,
@@ -62,11 +63,13 @@ function App() {
   ];
 
   const roadmapItems = [
-    { phase: "Q1 2025", title: "Platform Launch", status: "active" },
-    { phase: "Q2 2025", title: "Exchange Integration", status: "upcoming" },
-    { phase: "Q3 2025", title: "Energy Partnerships", status: "upcoming" },
-    { phase: "Q4 2025", title: "Global Expansion", status: "upcoming" },
+    { phase: "Phase 1", title: "Platform Launch", status: "active" },
+    { phase: "Phase 2", title: "Exchange Integration", status: "upcoming" },
+    { phase: "Phase 3", title: "Energy Partnerships", status: "upcoming" },
+    { phase: "Phase 4", title: "Global Expansion", status: "upcoming" },
   ];
+  // Roadmap active phase index for connector logic
+  const activePhaseIndex = roadmapItems.findIndex((r) => r.status === "active");
 
   const stats = [
     { label: "Total Supply", value: "100M OILX", trend: "+5.2%" },
@@ -157,8 +160,12 @@ function App() {
               Live OILX Price: {livePrice ? livePrice : "Loading..."}
             </h2>
 
-            {/* Live Price Chart */}
-            <OilXPriceChart />
+            {/* Live Price Chart (render only when VITE_SHOW_CHART=true) */}
+            {import.meta.env.VITE_SHOW_CHART === "true" && (
+              <div className="mb-10">
+                <OilXPriceChart />
+              </div>
+            )}
 
             <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
               OILX bridges the gap between traditional energy markets and
@@ -420,44 +427,157 @@ function App() {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {roadmapItems.map((item, index) => (
-                <div
-                  key={index}
-                  className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
-                    item.status === "active"
-                      ? "bg-amber-500/10 border-amber-500 shadow-lg shadow-amber-500/20"
-                      : "bg-slate-800/30 border-slate-600 hover:border-amber-500/30"
-                  }`}
-                >
-                  <div className="text-center">
-                    <div
-                      className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 ${
-                        item.status === "active"
-                          ? "bg-amber-500 text-slate-900"
-                          : "bg-slate-700 text-slate-300"
-                      }`}
-                    >
-                      <span className="font-bold">{index + 1}</span>
+            {/* Large screens: cards with standalone connectors between */}
+            <div className="hidden lg:flex items-stretch">
+              {roadmapItems.map((item, index) => {
+                const isActive = item.status === "active";
+                const isCompleted = index < activePhaseIndex;
+                const connectorFilled = index <= activePhaseIndex - 1; // connector before active filled
+                const isNextConnector = index === activePhaseIndex + 1; // connector between active and upcoming
+                return (
+                  <>
+                    {index > 0 && (
+                      <div
+                        key={`conn-${index}`}
+                        className="flex items-center justify-center"
+                        aria-hidden="true"
+                      >
+                        <div className="relative w-24 h-0.5 bg-slate-700/40 rounded overflow-hidden">
+                          {/* Completed connectors fully filled */}
+                          <div
+                            className={`absolute left-0 top-0 h-full bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 transition-[width] duration-700 ease-out ${
+                              connectorFilled ? "w-full" : "w-0"
+                            } ${
+                              isNextConnector && !connectorFilled
+                                ? "opacity-0"
+                                : ""
+                            }`}
+                            style={{
+                              transitionDelay: connectorFilled
+                                ? `${80 + index * 70}ms`
+                                : "0ms",
+                            }}
+                          ></div>
+                          {/* In-progress connector (active -> next) partial gradient */}
+                          {isNextConnector && !connectorFilled && (
+                            <div
+                              className="absolute left-0 top-0 h-full w-3/5 bg-gradient-to-r from-amber-400/40 via-amber-500/40 to-amber-600/40 animate-pulse"
+                              style={{ transition: "width 0.7s ease-out" }}
+                            ></div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    <div key={`card-${index}`} className="flex-1 flex">
+                      <div
+                        className={`relative z-10 p-6 rounded-xl border-2 transition-all duration-300 flex-1 flex flex-col items-center justify-start text-center ${
+                          isActive
+                            ? "bg-amber-500/10 border-amber-500 shadow-lg shadow-amber-500/20"
+                            : isCompleted
+                            ? "bg-amber-500/5 border-amber-400/60"
+                            : "bg-slate-800/30 border-slate-600 hover:border-amber-500/30"
+                        }`}
+                      >
+                        <div
+                          className={`relative inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 ring-2 ${
+                            isActive
+                              ? "bg-amber-500 text-slate-900 ring-amber-300 animate-pulse"
+                              : isCompleted
+                              ? "bg-gradient-to-br from-amber-400 to-amber-600 text-slate-900 ring-amber-300"
+                              : "bg-slate-700 text-slate-300 ring-slate-500/40"
+                          }`}
+                        >
+                          <span className="font-bold">{index + 1}</span>
+                          {isActive && (
+                            <span
+                              className="absolute inset-0 rounded-full animate-ping bg-amber-400/40"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </div>
+                        <div className="text-amber-400 font-semibold mb-2">
+                          {item.phase}
+                        </div>
+                        <div className="text-white font-bold mb-3">
+                          {item.title}
+                        </div>
+                        <div
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                            isActive
+                              ? "bg-amber-500 text-slate-900"
+                              : isCompleted
+                              ? "bg-amber-400/30 text-amber-300 border border-amber-400/40"
+                              : "bg-slate-700 text-slate-300"
+                          }`}
+                        >
+                          {isActive
+                            ? "In Progress"
+                            : isCompleted
+                            ? "Complete"
+                            : "Upcoming"}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-amber-400 font-semibold mb-2">
-                      {item.phase}
-                    </div>
-                    <div className="text-white font-bold mb-3">
-                      {item.title}
-                    </div>
-                    <div
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        item.status === "active"
-                          ? "bg-amber-500 text-slate-900"
-                          : "bg-slate-700 text-slate-300"
-                      }`}
-                    >
-                      {item.status === "active" ? "In Progress" : "Upcoming"}
+                  </>
+                );
+              })}
+            </div>
+            {/* Smaller screens fallback (grid) */}
+            <div className="grid md:grid-cols-2 lg:hidden gap-6 mt-8">
+              {roadmapItems.map((item, index) => {
+                const isActive = item.status === "active";
+                const isCompleted = index < activePhaseIndex;
+                return (
+                  <div
+                    key={index}
+                    className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
+                      isActive
+                        ? "bg-amber-500/10 border-amber-500 shadow-lg shadow-amber-500/20"
+                        : isCompleted
+                        ? "bg-amber-500/5 border-amber-400/60"
+                        : "bg-slate-800/30 border-slate-600"
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div
+                        className={`relative inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 ring-2 ${
+                          isActive
+                            ? "bg-amber-500 text-slate-900 ring-amber-300 animate-pulse"
+                            : isCompleted
+                            ? "bg-gradient-to-br from-amber-400 to-amber-600 text-slate-900 ring-amber-300"
+                            : "bg-slate-700 text-slate-300 ring-slate-500/40"
+                        }`}
+                      >
+                        <span className="font-bold">{index + 1}</span>
+                        {isActive && (
+                          <span className="absolute inset-0 rounded-full animate-ping bg-amber-400/40" />
+                        )}
+                      </div>
+                      <div className="text-amber-400 font-semibold mb-2">
+                        {item.phase}
+                      </div>
+                      <div className="text-white font-bold mb-3">
+                        {item.title}
+                      </div>
+                      <div
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          isActive
+                            ? "bg-amber-500 text-slate-900"
+                            : isCompleted
+                            ? "bg-amber-400/30 text-amber-300 border border-amber-400/40"
+                            : "bg-slate-700 text-slate-300"
+                        }`}
+                      >
+                        {isActive
+                          ? "In Progress"
+                          : isCompleted
+                          ? "Complete"
+                          : "Upcoming"}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -478,7 +598,7 @@ function App() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <button
-                className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 px-10 py-4 rounded-full font-bold text-lg hover:from-amber-400 hover:to-amber-500 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center"
+                className="bg-gradient-to-r from-green-500 to-green-600 text-black-900 px-10 py-4 rounded-full font-bold text-lg hover:from-amber-400 hover:to-amber-500 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center"
                 onClick={() =>
                   window.open(
                     "https://moonshot.com/PqXub2t6A2vvUb3Mevk4uhj339rMhhmxq2HQzYNmoon?ref=FRApAfnF2I"
