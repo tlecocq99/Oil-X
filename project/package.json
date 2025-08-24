@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-  "backend": "node backend/price-fetcher.js",
-  "dev:full": "node scripts/dev-runner.mjs",
+    "backend": "node backend/price-fetcher.js",
+    "dev:full": "node scripts/dev-runner.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
