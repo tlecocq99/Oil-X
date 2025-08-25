@@ -10,8 +10,19 @@ app.use(cors());
 app.use(express.json());
 
 // Simple health check (helps diagnose ECONNREFUSED quickly)
-app.get("/api/health", async (_req, res) => {
-  res.json({ ok: true, timestamp: Date.now() });
+app.get("/api/health", async (req, res) => {
+  const network = (req.query.network || DEFAULT_NETWORK).toString();
+  const pool = (req.query.pool || DEFAULT_POOL).toString();
+  res.json({
+    ok: true,
+    timestamp: Date.now(),
+    meta: {
+      network,
+      pool,
+      defaultNetwork: network === DEFAULT_NETWORK,
+      defaultPool: pool === DEFAULT_POOL,
+    },
+  });
 });
 
 const PORT = process.env.PORT || 4000;
@@ -19,12 +30,21 @@ const GECKO_BASE = "https://api.geckoterminal.com/api/v2";
 const DEFAULT_NETWORK = process.env.GT_NETWORK || "solana";
 const DEFAULT_POOL =
   process.env.GT_POOL || "9h7GAGU8T75jdD2uHhFGEMHzCLLDXdgireWZho8jgnKp";
-const GECKO_URL = `${GECKO_BASE}/networks/${DEFAULT_NETWORK}/pools/${DEFAULT_POOL}`; // pool details endpoint
-const POOL_ID = DEFAULT_POOL; // backwards compat
+const GECKO_URL = `${GECKO_BASE}/networks/${DEFAULT_NETWORK}/pools/${DEFAULT_POOL}`; // legacy default pool details endpoint
 
 // Env configurable values (fallbacks keep existing UI feel)
 const TOTAL_SUPPLY = Number(process.env.TOTAL_SUPPLY || 100_000_000); // 100M
 const HOLDERS_COUNT = Number(process.env.HOLDERS_COUNT || 8432);
+
+function buildMeta(network, pool, extra = {}) {
+  return {
+    network,
+    pool,
+    defaultNetwork: network === DEFAULT_NETWORK,
+    defaultPool: pool === DEFAULT_POOL,
+    ...extra,
+  };
+}
 
 function formatNumber(num, { decimals = 2, compact = true, prefix = "" } = {}) {
   if (num === null || num === undefined || isNaN(num)) return null;
@@ -95,37 +115,63 @@ async function fetchTrades(network, pool, limit) {
 }
 
 app.get("/api/price", async (req, res) => {
+  const network = (req.query.network || DEFAULT_NETWORK).toString();
+  const pool = (req.query.pool || DEFAULT_POOL).toString();
   try {
-    const { data } = await axios.get(GECKO_URL, {
+    const poolUrl = `${GECKO_BASE}/networks/${network}/pools/${pool}`;
+    const { data } = await axios.get(poolUrl, {
       headers: { accept: "application/json" },
       timeout: 10000,
     });
     const price = data.data?.attributes?.base_token_price_usd;
-    res.json({ price: price ? `$${Number(price).toFixed(7)}` : "N/A" });
+    res.json({
+      price: price ? `$${Number(price).toFixed(7)}` : "N/A",
+      meta: {
+        network,
+        pool,
+        defaultNetwork: network === DEFAULT_NETWORK,
+        defaultPool: pool === DEFAULT_POOL,
+      },
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Failed to fetch price", details: err.message });
+    res.status(500).json({
+      error: "Failed to fetch price",
+      details: err.message,
+      meta: { network, pool },
+    });
   }
 });
 
 // Save a live price tick to MongoDB
 app.post("/api/price-tick", async (req, res) => {
+  const network = (req.query.network || DEFAULT_NETWORK).toString();
+  const pool = (req.query.pool || DEFAULT_POOL).toString();
   try {
     const { price } = req.body;
     const timestamp = Date.now();
     await savePriceTick(price, timestamp);
-    res.json({ success: true });
+    res.json({
+      success: true,
+      price,
+      timestamp,
+      meta: buildMeta(network, pool),
+    });
   } catch (err) {
     console.error("/api/price-tick error", err);
     res
       .status(500)
-      .json({ error: "Failed to save price tick", details: err.message });
+      .json({
+        error: "Failed to save price tick",
+        details: err.message,
+        meta: buildMeta(network, pool),
+      });
   }
 });
 
 // Get recent price ticks for chart
 app.get("/api/price-ticks", async (req, res) => {
+  const network = (req.query.network || DEFAULT_NETWORK).toString();
+  const pool = (req.query.pool || DEFAULT_POOL).toString();
   try {
     const limit = Number(req.query.limit) || 100;
     const ticks = await getRecentPriceTicks(limit);
@@ -133,19 +179,26 @@ app.get("/api/price-ticks", async (req, res) => {
       ticks: ticks
         .reverse()
         .map((t) => ({ price: t.price, timestamp: t.timestamp })),
+      meta: buildMeta(network, pool, { limit, count: ticks.length }),
     });
   } catch (err) {
     console.error("/api/price-ticks error", err);
     res
       .status(500)
-      .json({ error: "Failed to fetch price ticks", details: err.message });
+      .json({
+        error: "Failed to fetch price ticks",
+        details: err.message,
+        meta: buildMeta(network, pool),
+      });
   }
 });
 
 app.get("/api/chart", async (req, res) => {
+  const network = (req.query.network || DEFAULT_NETWORK).toString();
+  const pool = (req.query.pool || DEFAULT_POOL).toString();
+  const timeframe = (req.query.timeframe || "minute").toString(); // accepted: minute, hour, day
   try {
-    const chartUrl =
-      "https://api.geckoterminal.com/api/v2/networks/solana/pools/FEhpt1a5HVmD5LKyGAju4vJ9NTbCMdkAQitEF5D3nFqz/ohlcv/minute";
+    const chartUrl = `${GECKO_BASE}/networks/${network}/pools/${pool}/ohlcv/${timeframe}`;
     const { data } = await axios.get(chartUrl, {
       headers: { accept: "application/json" },
       timeout: 10000,
@@ -157,11 +210,26 @@ app.get("/api/chart", async (req, res) => {
     ]);
     res.json({
       series: { prices },
+      // keep backward-compatible top-level fields (network, pool, timeframe)
+      network,
+      pool,
+      timeframe,
+      meta: {
+        network,
+        pool,
+        timeframe,
+        defaultNetwork: network === DEFAULT_NETWORK,
+        defaultPool: pool === DEFAULT_POOL,
+      },
     });
   } catch (err) {
     res
       .status(500)
-      .json({ error: "Failed to fetch chart data", details: err.message });
+      .json({
+        error: "Failed to fetch chart data",
+        details: err.message,
+        meta: buildMeta(network, pool, { timeframe }),
+      });
   }
 });
 
@@ -194,7 +262,7 @@ app.get("/api/stats", async (req, res) => {
       marketCapUsd: poolStats.marketCapUsd,
       fdvUsd: poolStats.fdvUsd,
       lockedLiquidityPercentage: poolStats.lockedLiquidityPercentage,
-      holders: HOLDERS_COUNT || null, // Placeholder (needs on-chain source for live value)
+      holders: HOLDERS_COUNT || null,
       tradingVolumeUsdPeriod: volumePeriod,
       periodHours: hours,
       tradesConsidered: considered,
@@ -204,12 +272,22 @@ app.get("/api/stats", async (req, res) => {
         volume: "trades_sum",
         holders: "env",
       },
+      meta: {
+        network,
+        pool,
+        defaultNetwork: network === DEFAULT_NETWORK,
+        defaultPool: pool === DEFAULT_POOL,
+      },
     };
     res.json(response);
   } catch (err) {
     res
       .status(500)
-      .json({ error: "Failed to compute stats", details: err.message });
+      .json({
+        error: "Failed to compute stats",
+        details: err.message,
+        meta: buildMeta(network, pool, { hours, limit }),
+      });
   }
 });
 
@@ -251,11 +329,25 @@ app.get("/api/trades", async (req, res) => {
       const v = parseFloat(t.attributes.volume_in_usd || "0");
       return acc + (isNaN(v) ? 0 : v);
     }, 0);
-    res.json({ trades, aggregatedVolumeUsd });
+    res.json({
+      trades,
+      aggregatedVolumeUsd,
+      meta: {
+        network,
+        pool,
+        limit,
+        defaultNetwork: network === DEFAULT_NETWORK,
+        defaultPool: pool === DEFAULT_POOL,
+      },
+    });
   } catch (err) {
     res
       .status(500)
-      .json({ error: "Failed to fetch trades", details: err.message });
+      .json({
+        error: "Failed to fetch trades",
+        details: err.message,
+        meta: buildMeta(network, pool, { limit }),
+      });
   }
 });
 
