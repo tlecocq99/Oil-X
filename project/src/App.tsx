@@ -181,11 +181,11 @@ function App() {
               </a>
               <button
                 className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 px-6 py-2 rounded-full font-semibold hover:from-amber-400 hover:to-amber-500 transition-all duration-200 shadow-lg hover:shadow-xl"
-                onClick={() =>
-                  window.open(
-                    "https://moonshot.com/PqXub2t6A2vvUb3Mevk4uhj339rMhhmxq2HQzYNmoon?ref=FRApAfnF2I"
-                  )
-                }
+                onClick={() => (
+                  <a href="https://moonshot.com/PqXub2t6A2vvUb3Mevk4uhj339rMhhmxq2HQzYNmoon?ref=FRApAfnF2I">
+                    Buy OILX
+                  </a>
+                )}
               >
                 Buy OILX
               </button>
@@ -233,11 +233,11 @@ function App() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
                 className="bg-gradient-to-r from-green-500 to-green-600 text-black-900 px-8 py-4 rounded-full font-bold text-lg hover:from-amber-400 hover:to-amber-500 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center"
-                onClick={() =>
-                  window.open(
-                    "https://moonshot.com/PqXub2t6A2vvUb3Mevk4uhj339rMhhmxq2HQzYNmoon?ref=FRApAfnF2I"
-                  )
-                }
+                onClick={() => (
+                  <a href="https://moonshot.com/PqXub2t6A2vvUb3Mevk4uhj339rMhhmxq2HQzYNmoon?ref=FRApAfnF2I">
+                    Invest in OILX
+                  </a>
+                )}
               >
                 Invest in OILX
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -660,20 +660,17 @@ function App() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <button
-                className="bg-gradient-to-r from-green-500 to-green-600 text-black-900 px-10 py-4 rounded-full font-bold text-lg hover:from-amber-400 hover:to-amber-500 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center"
-                onClick={() =>
-                  window.open(
-                    "https://moonshot.com/PqXub2t6A2vvUb3Mevk4uhj339rMhhmxq2HQzYNmoon?ref=FRApAfnF2I"
-                  )
-                }
-              >
-                Buy OILX Now
-                <ChevronRight className="w-5 h-5 ml-2" />
+              <button className="bg-gradient-to-r from-green-500 to-green-600 text-black-900 px-10 py-4 rounded-full font-bold text-lg hover:from-amber-400 hover:to-amber-500 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center">
+                <a href="https://moonshot.com/PqXub2t6A2vvUb3Mevk4uhj339rMhhmxq2HQzYNmoon?ref=FRApAfnF2I">
+                  Buy OILX Now
+                  <ChevronRight className="w-5 h-5 ml-2" />
+                </a>
               </button>
               <button
                 className="border-2 border-slate-400 text-slate-300 px-10 py-4 rounded-full font-bold text-lg hover:border-amber-500 hover:text-amber-400 transition-all duration-200"
-                onClick={() => window.open("https://x.com/oilx_change?s=21")}
+                onClick={() =>
+                  window.open("https://discord.gg/h7P6kdsddv", "_blank")
+                }
               >
                 Join Community
               </button>
