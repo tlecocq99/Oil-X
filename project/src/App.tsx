@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import api from "./apiClient";
 // Chart temporarily disabled for initial deployment. Set VITE_SHOW_CHART=true to enable.
 import OilXPriceChart from "./OilXPriceChart";
 import {
@@ -23,8 +24,7 @@ function App() {
   useEffect(() => {
     async function fetchPrice() {
       try {
-        const res = await fetch("http://localhost:4000/api/price");
-        const data = await res.json();
+        const { data } = await api.get("/api/price");
         setLivePrice(data.price);
       } catch (err) {
         setLivePrice("N/A");
@@ -70,13 +70,70 @@ function App() {
   ];
   // Roadmap active phase index for connector logic
   const activePhaseIndex = roadmapItems.findIndex((r) => r.status === "active");
+  // Dynamic stats pulled from backend (/api/stats)
+  const [stats, setStats] = useState<
+    { label: string; value: string | null; trend?: string | null }[]
+  >([
+    { label: "Locked Liquidity", value: null },
+    { label: "Market Cap", value: null },
+    { label: "Holders", value: null },
+    { label: "Trading Volume", value: null },
+  ]);
 
-  const stats = [
-    { label: "Total Supply", value: "100M OILX", trend: "+5.2%" },
-    { label: "Market Cap", value: "$2.4M", trend: "+12.8%" },
-    { label: "Holders", value: "8,432", trend: "+18.5%" },
-    { label: "Trading Volume", value: "$456K", trend: "+24.1%" },
-  ];
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchStats() {
+      try {
+        const { data } = await api.get("/api/stats");
+        if (cancelled) return;
+        const next = [
+          {
+            label: "Locked Liquidity",
+            value:
+              data.lockedLiquidityPercentage != null
+                ? `${Number(data.lockedLiquidityPercentage).toFixed(2)}%`
+                : null,
+            trend: null,
+          },
+          {
+            label: "Market Cap",
+            value:
+              data.marketCapUsd != null
+                ? `$${Number(data.marketCapUsd).toLocaleString(undefined, {
+                    maximumFractionDigits: 0,
+                  })}`
+                : null,
+            trend: data.trends?.marketCap || null,
+          },
+          {
+            label: "Holders",
+            value: data.holders || null,
+            trend: data.trends?.holders || null,
+          },
+          {
+            label: "Trading Volume",
+            value:
+              data.tradingVolumeUsdPeriod != null
+                ? `$${Number(data.tradingVolumeUsdPeriod).toLocaleString(
+                    undefined,
+                    { maximumFractionDigits: 0 }
+                  )}`
+                : null,
+            trend: data.trends?.tradingVolume || null,
+          },
+        ];
+        setStats(next);
+      } catch (err) {
+        // fallback: leave existing (null) values -> UI shows loading state
+      }
+    }
+    fetchStats();
+    const interval = setInterval(fetchStats, 60_000); // refresh every minute
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-amber-900">
@@ -200,13 +257,19 @@ function App() {
               className="bg-slate-800/50 backdrop-blur-sm border border-amber-500/20 rounded-xl p-4 text-center"
             >
               <div className="text-2xl font-bold text-white mb-1">
-                {stat.value}
+                {stat.value ? stat.value : "..."}
               </div>
               <div className="text-slate-400 text-sm mb-2">{stat.label}</div>
-              <div className="text-green-400 text-xs font-medium flex items-center justify-center">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                {stat.trend}
-              </div>
+              {stat.trend ? (
+                <div className="text-green-400 text-xs font-medium flex items-center justify-center">
+                  <TrendingUp className="w-3 h-3 mr-1" />
+                  {stat.trend}
+                </div>
+              ) : (
+                <div className="text-slate-500 text-[10px] h-4 flex items-center justify-center">
+                  {stat.value ? "" : "Loading"}
+                </div>
+              )}
             </div>
           ))}
         </div>

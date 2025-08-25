@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import api from "./apiClient";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -46,8 +47,9 @@ function OilXPriceChart() {
   useEffect(() => {
     // Fetch initial ticks from MongoDB
     async function fetchInitialTicks() {
-      const res = await fetch("/api/price-ticks?limit=100");
-      const data = await res.json();
+      const { data } = await api.get("/api/price-ticks", {
+        params: { limit: 100 },
+      });
       if (Array.isArray(data.ticks)) {
         dataRef.current.labels = (data.ticks as PriceTick[]).map((tick) => {
           const d = new Date(tick.timestamp);
@@ -82,19 +84,14 @@ function OilXPriceChart() {
 
     // Fetch and persist new tick
     async function fetchAndSaveLatestPrice() {
-      const priceRes = await fetch("/api/price");
-      const priceData = await priceRes.json();
+      const { data: priceData } = await api.get("/api/price");
       let latest = null;
       if (priceData.price && typeof priceData.price === "string") {
         latest = Number(priceData.price.replace("$", ""));
       }
       if (latest !== null) {
         // Save to MongoDB
-        await fetch("/api/price-tick", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ price: latest }),
-        });
+        await api.post("/api/price-tick", { price: latest });
         const now = new Date();
         const label = now.toLocaleTimeString([], {
           hour: "2-digit",
