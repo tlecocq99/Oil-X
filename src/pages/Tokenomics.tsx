@@ -1,11 +1,8 @@
-import React from "react";
 import {
   Coins,
-  TrendingUp,
   Shield,
   Users,
   Zap,
-  PieChart,
   Lock,
   Target,
   BarChart3,

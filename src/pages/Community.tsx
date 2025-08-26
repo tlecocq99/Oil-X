@@ -1,13 +1,9 @@
 import {
   Users,
   MessageCircle,
-  Twitter,
   Send,
-  Github,
-  Globe,
   Heart,
   Star,
-  TrendingUp,
   Award,
   Zap,
   Target,
@@ -41,7 +37,7 @@ export default function Community() {
     },
   ];
 
-  const communityStats = [
+  /*const communityStats = [
     {
       label: "Total Members",
       value: "25,000+",
@@ -58,7 +54,7 @@ export default function Community() {
       value: "9.2/10",
       icon: <Star className="w-6 h-6" />,
     },
-  ];
+  ]; */
 
   const communityPrograms = [
     {
