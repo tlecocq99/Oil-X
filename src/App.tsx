@@ -5,6 +5,7 @@ import Whitepaper from "./pages/Whitepaper";
 import Tokenomics from "./pages/Tokenomics";
 import Community from "./pages/Community";
 import ScrollToTop from "./components/ScrollToTop";
+import { Analytics } from "@vercel/analytics/next";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/community" element={<Community />} />
         </Routes>
       </Layout>
+      <Analytics />
     </Router>
   );
 }
