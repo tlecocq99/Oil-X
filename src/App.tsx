@@ -4,10 +4,12 @@ import Home from "./pages/Home";
 import Whitepaper from "./pages/Whitepaper";
 import Tokenomics from "./pages/Tokenomics";
 import Community from "./pages/Community";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
