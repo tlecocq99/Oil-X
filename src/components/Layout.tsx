@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import logo from "../public/logo.svg";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -33,7 +34,7 @@ export default function Layout({ children }: LayoutProps) {
             >
               <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center">
                 <img
-                  src="src/public/logo.svg"
+                  src={logo}
                   alt="OILX Logo"
                   className="w-10 h-10 rounded-full object-cover"
                 />
@@ -96,7 +97,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center">
                   <img
-                    src="src/public/logo.svg"
+                    src={logo}
                     alt="OILX Logo"
                     className="w-10 h-10 rounded-full object-cover"
                   />
