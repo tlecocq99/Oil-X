@@ -82,7 +82,7 @@ export default function Home() {
 
   const roadmapData: RoadmapPhase[] = [
     {
-      phase: "Q1 2025",
+      phase: "Phase 1",
       title: "Foundation & Launch",
       status: "active",
       progress: 95,
@@ -110,7 +110,7 @@ export default function Home() {
       ],
     },
     {
-      phase: "Q2 2025",
+      phase: "Phase 2",
       title: "Exchange Integration",
       status: "upcoming",
       progress: 0,
@@ -128,7 +128,7 @@ export default function Home() {
       ],
     },
     {
-      phase: "Q3 2025",
+      phase: "Phase 3",
       title: "Energy Partnerships",
       status: "upcoming",
       progress: 0,
@@ -145,7 +145,7 @@ export default function Home() {
       ],
     },
     {
-      phase: "Q4 2025",
+      phase: "Phase 4",
       title: "Global Expansion",
       status: "upcoming",
       progress: 0,
