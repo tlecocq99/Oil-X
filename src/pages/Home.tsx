@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   TrendingUp,
@@ -15,6 +15,11 @@ import {
   Clock,
   Milestone,
 } from "lucide-react";
+import {
+  getStats,
+  formatCurrency,
+  type StatsResponse,
+} from "../services/gecko";
 
 type RoadmapStatus = "completed" | "active" | "upcoming";
 
@@ -32,6 +37,30 @@ interface RoadmapPhase {
 }
 
 export default function Home() {
+  const [marketData, setMarketData] = useState<StatsResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadMarketData = async () => {
+      setIsLoading(true);
+      const data = await getStats(
+        "solana",
+        "9h7GAGU8T75jdD2uHhFGEMHzCLLDXdgireWZho8jgnKp",
+        24,
+        200
+      );
+      setMarketData(data);
+      setIsLoading(false);
+    };
+
+    loadMarketData();
+
+    // Refresh data every 30 seconds
+    const interval = setInterval(loadMarketData, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const features = [
     {
       icon: <Shield className="w-6 h-6" />,
@@ -58,25 +87,41 @@ export default function Home() {
       label: "Total Supply",
       value: "1.0B OILX",
       icon: <Coins className="w-4 h-4" />,
-      trend: "",
+      trend: "As of 8/26/2025",
     },
     {
       label: "Market Cap",
-      value: "$2.4M",
+      value: isLoading
+        ? "Loading..."
+        : marketData
+        ? formatCurrency(marketData.marketCapUsd)
+        : "$1M",
       icon: <TrendingUp className="w-4 h-4" />,
-      trend: "",
+      trend: isLoading
+        ? "..."
+        : marketData
+        ? `Pulled from latest ${marketData.tradesConsidered} trades`
+        : "",
     },
-    {
+    /*{
       label: "Holders",
-      value: "<1,000",
+      value: isLoading ? "Loading..." : "<1,000",
       icon: <Users className="w-4 h-4" />,
-      trend: "",
-    },
+      trend: "As of 8/26/2025",
+    },*/
     {
       label: "Trading Volume",
-      value: "$456K",
+      value: isLoading
+        ? "Loading..."
+        : marketData
+        ? formatCurrency(marketData.tradingVolumeUsdPeriod)
+        : "$456K",
       icon: <BarChart3 className="w-4 h-4" />,
-      trend: "",
+      trend: isLoading
+        ? "..."
+        : marketData
+        ? `${marketData.periodHours}h period`
+        : "",
     },
   ];
 
@@ -207,7 +252,7 @@ export default function Home() {
         </div>
 
         {/* Floating stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-16">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-16">
           {stats.map((stat, index) => (
             <div
               key={index}
@@ -221,11 +266,13 @@ export default function Home() {
               </div>
               <div className="text-slate-400 text-sm mb-2">{stat.label}</div>
               <div className="text-green-400 text-xs font-medium flex items-center justify-center">
-                <TrendingUp className="w-3 h-3 mr-1" />
                 {stat.trend}
               </div>
             </div>
           ))}
+        </div>
+        <div className="text-sm flex justify-center mt-3 text-slate-500">
+          * Dynamic data pulled from GeckoTerminal API *
         </div>
       </section>
 
