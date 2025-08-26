@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import { savePriceTick, getRecentPriceTicks } from "./price-tick-db.js";
+import cache from "./cache.js";
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ app.get("/api/health", async (req, res) => {
   res.json({
     ok: true,
     timestamp: Date.now(),
+    cache: cache.getStats(),
     meta: {
       network,
       pool,
@@ -66,12 +68,15 @@ function formatNumber(num, { decimals = 2, compact = true, prefix = "" } = {}) {
 
 async function fetchPoolStats(network = DEFAULT_NETWORK, pool = DEFAULT_POOL) {
   try {
-    const { data } = await axios.get(
-      `${GECKO_BASE}/networks/${network}/pools/${pool}`,
+    const url = `${GECKO_BASE}/networks/${network}/pools/${pool}`;
+    const { data } = await cache.cachedRequest(
+      axios,
+      url,
       {
         headers: { accept: "application/json" },
         timeout: 10000,
-      }
+      },
+      'poolStats'
     );
     const attrs = data?.data?.attributes || {};
     const pickFirstNumber = (arr) =>
@@ -107,10 +112,15 @@ async function fetchPoolStats(network = DEFAULT_NETWORK, pool = DEFAULT_POOL) {
 
 async function fetchTrades(network, pool, limit) {
   const url = `${GECKO_BASE}/networks/${network}/pools/${pool}/trades?limit=${limit}`;
-  const { data } = await axios.get(url, {
-    headers: { accept: "application/json" },
-    timeout: 10000,
-  });
+  const { data } = await cache.cachedRequest(
+    axios,
+    url,
+    {
+      headers: { accept: "application/json" },
+      timeout: 10000,
+    },
+    'trades'
+  );
   return data.data || [];
 }
 
@@ -119,10 +129,15 @@ app.get("/api/price", async (req, res) => {
   const pool = (req.query.pool || DEFAULT_POOL).toString();
   try {
     const poolUrl = `${GECKO_BASE}/networks/${network}/pools/${pool}`;
-    const { data } = await axios.get(poolUrl, {
-      headers: { accept: "application/json" },
-      timeout: 10000,
-    });
+    const { data } = await cache.cachedRequest(
+      axios,
+      poolUrl,
+      {
+        headers: { accept: "application/json" },
+        timeout: 10000,
+      },
+      'price'
+    );
     const price = data.data?.attributes?.base_token_price_usd;
     res.json({
       price: price ? `$${Number(price).toFixed(7)}` : "N/A",
@@ -199,10 +214,15 @@ app.get("/api/chart", async (req, res) => {
   const timeframe = (req.query.timeframe || "minute").toString(); // accepted: minute, hour, day
   try {
     const chartUrl = `${GECKO_BASE}/networks/${network}/pools/${pool}/ohlcv/${timeframe}`;
-    const { data } = await axios.get(chartUrl, {
-      headers: { accept: "application/json" },
-      timeout: 10000,
-    });
+    const { data } = await cache.cachedRequest(
+      axios,
+      chartUrl,
+      {
+        headers: { accept: "application/json" },
+        timeout: 10000,
+      },
+      'chart'
+    );
     const ohlcvList = data.data?.attributes?.ohlcv_list || [];
     const prices = ohlcvList.map(([timestamp, , , , close]) => [
       timestamp,
@@ -298,10 +318,15 @@ app.get("/api/trades", async (req, res) => {
   const pool = (req.query.pool || DEFAULT_POOL).toString();
   try {
     const tradesUrl = `${GECKO_BASE}/networks/${network}/pools/${pool}/trades?limit=${limit}`;
-    const { data } = await axios.get(tradesUrl, {
-      headers: { accept: "application/json" },
-      timeout: 10000,
-    });
+    const { data } = await cache.cachedRequest(
+      axios,
+      tradesUrl,
+      {
+        headers: { accept: "application/json" },
+        timeout: 10000,
+      },
+      'trades'
+    );
     const trades = (data.data || []).map((t) => {
       const a = t.attributes || {};
       return {
@@ -348,6 +373,25 @@ app.get("/api/trades", async (req, res) => {
         details: err.message,
         meta: buildMeta(network, pool, { limit }),
       });
+  }
+});
+
+// Cache management endpoint
+app.get("/api/cache", async (req, res) => {
+  const action = req.query.action;
+  
+  if (action === 'clear') {
+    cache.clear();
+    res.json({
+      success: true,
+      message: "Cache cleared",
+      stats: cache.getStats()
+    });
+  } else {
+    res.json({
+      stats: cache.getStats(),
+      actions: ['clear']
+    });
   }
 });
 
