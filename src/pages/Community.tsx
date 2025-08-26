@@ -12,16 +12,15 @@ import {
   Zap,
   Target,
 } from "lucide-react";
+import twitterLogo from "../public/X-logo.png";
 
 export default function Community() {
   const socialChannels = [
     {
       icon: <Send className="w-8 h-8" />,
-      name: "Telegram",
+      name: "Telegram [TBA]",
       description:
         "Join our main community chat for real-time discussions and updates",
-      members: "12,500+",
-      link: "#",
       color: "from-blue-500 to-blue-600",
     },
     {
@@ -29,26 +28,16 @@ export default function Community() {
       name: "Discord",
       description:
         "Connect with fellow OILX holders and participate in community events",
-      members: "8,200+",
-      link: "#",
+      link: "https://discord.gg/enf2FzGS6n",
       color: "from-indigo-500 to-indigo-600",
     },
     {
-      icon: <Twitter className="w-8 h-8" />,
-      name: "Twitter",
+      icon: <img src={twitterLogo} className="w-8 h-8" />,
+      name: "X",
       description:
         "Follow us for the latest news, updates, and market insights",
-      members: "15,800+",
-      link: "#",
-      color: "from-sky-500 to-sky-600",
-    },
-    {
-      icon: <Github className="w-8 h-8" />,
-      name: "GitHub",
-      description: "Explore our open-source code and contribute to development",
-      members: "450+",
-      link: "#",
-      color: "from-gray-500 to-gray-600",
+      link: "https://x.com/OILX_CHANGE",
+      color: "black",
     },
   ];
 
@@ -74,11 +63,10 @@ export default function Community() {
   const communityPrograms = [
     {
       icon: <Award className="w-8 h-8" />,
-      title: "Ambassador Program",
-      description:
-        "Become an OILX ambassador and earn rewards for promoting the project in your region.",
+      title: "Discord Community Mod Program",
+      description: "Become a Discord moderator and earn exclusive benefits.",
       benefits: [
-        "Monthly OILX rewards",
+        "OILX giveaways",
         "Exclusive access to events",
         "Direct team communication",
       ],
@@ -86,48 +74,25 @@ export default function Community() {
     },
     {
       icon: <Zap className="w-8 h-8" />,
-      title: "Bug Bounty Program",
-      description:
-        "Help us maintain security by reporting vulnerabilities and earn substantial rewards.",
-      benefits: [
-        "Up to $10,000 rewards",
-        "Recognition in community",
-        "Direct developer access",
-      ],
+      title: "Milestone Giveaways",
+      description: "Earn rewards by contributing to market cap milestones.",
+      benefits: ["Tune in to X and for giveaway announcements."],
       status: "Active",
-    },
-    {
-      icon: <Target className="w-8 h-8" />,
-      title: "Content Creator Fund",
-      description:
-        "Create educational content about OILX and energy trading to earn from our creator fund.",
-      benefits: [
-        "Monthly funding pool",
-        "Content promotion",
-        "Creator networking",
-      ],
-      status: "Coming Soon",
     },
   ];
 
   const events = [
     {
-      date: "Jan 15, 2025",
+      date: "Tune in to Discord for information",
       title: "OILX Community AMA",
       description: "Monthly Ask Me Anything session with the core team",
       type: "Virtual Event",
     },
     {
-      date: "Jan 22, 2025",
-      title: "Energy Trading Workshop",
-      description: "Educational workshop on energy market fundamentals",
-      type: "Educational",
-    },
-    {
-      date: "Feb 5, 2025",
-      title: "Partnership Announcement",
+      date: "Tune in to Discord for information",
+      title: "Partnership Unveiling",
       description: "Major partnership reveal with Q&A session",
-      type: "Announcement",
+      type: "Reveal",
     },
   ];
 
@@ -147,20 +112,21 @@ export default function Community() {
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
               Join the
               <span className="block bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
-                Energy Revolution
+                OILX Revolution
               </span>
             </h1>
 
             <p className="text-xl text-slate-300 mb-10 leading-relaxed">
-              Connect with thousands of like-minded investors, energy
+              Connect with thousands of like-minded investors, crypto
               professionals, and blockchain enthusiasts who are building the
-              future of energy trading together.
+              future of crypto trading together.
             </p>
           </div>
         </div>
       </section>
 
       {/* Community Stats */}
+      {/*
       <section className="py-20 px-6 bg-slate-800/30">
         <div className="container mx-auto">
           <div className="text-center mb-16">
@@ -190,7 +156,7 @@ export default function Community() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Social Channels */}
       <section className="py-20 px-6">
@@ -205,7 +171,7 @@ export default function Community() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-8">
             {socialChannels.map((channel, index) => (
               <div
                 key={index}
@@ -213,7 +179,7 @@ export default function Community() {
               >
                 <div className="flex items-start space-x-4">
                   <div
-                    className={`p-3 rounded-full bg-gradient-to-r ${channel.color} text-white flex-shrink-0`}
+                    className={`p-3 rounded-full ${channel.color} text-white flex-shrink-0`}
                   >
                     {channel.icon}
                   </div>
@@ -222,15 +188,13 @@ export default function Community() {
                       <h3 className="text-2xl font-semibold text-white">
                         {channel.name}
                       </h3>
-                      <span className="text-amber-400 font-bold">
-                        {channel.members}
-                      </span>
                     </div>
                     <p className="text-slate-300 mb-4 leading-relaxed">
                       {channel.description}
                     </p>
                     <a
                       href={channel.link}
+                      target="_blank"
                       className="inline-flex items-center text-amber-400 hover:text-amber-300 font-medium transition-colors"
                     >
                       Join Now
@@ -269,7 +233,7 @@ export default function Community() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8">
             {communityPrograms.map((program, index) => (
               <div
                 key={index}
@@ -347,7 +311,7 @@ export default function Community() {
                   </div>
                   <div className="mt-4 md:mt-0 md:ml-6">
                     <button className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 px-6 py-2 rounded-full font-semibold hover:from-amber-400 hover:to-amber-500 transition-all duration-200">
-                      Join Event
+                      Coming Soon
                     </button>
                   </div>
                 </div>
@@ -382,12 +346,12 @@ export default function Community() {
               </div>
 
               <div className="bg-slate-800/50 backdrop-blur-sm border border-amber-500/20 rounded-xl p-6">
-                <Users className="w-8 h-8 text-amber-400 mx-auto mb-3" />
+                <Target className="w-8 h-8 text-amber-400 mx-auto mb-3" />
                 <h3 className="text-lg font-bold text-white mb-2">
                   Stay On Topic
                 </h3>
                 <p className="text-slate-300 text-sm">
-                  Keep discussions relevant to OILX and energy trading
+                  Keep discussions relevant to OILX and crypto trading
                 </p>
               </div>
 
@@ -402,7 +366,7 @@ export default function Community() {
               </div>
 
               <div className="bg-slate-800/50 backdrop-blur-sm border border-amber-500/20 rounded-xl p-6">
-                <Target className="w-8 h-8 text-amber-400 mx-auto mb-3" />
+                <Users className="w-8 h-8 text-amber-400 mx-auto mb-3" />
                 <h3 className="text-lg font-bold text-white mb-2">
                   No Financial Advice
                 </h3>

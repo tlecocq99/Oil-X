@@ -23,7 +23,6 @@ export default function Tokenomics() {
       value: "1%-2.5%",
       icon: <Zap className="w-6 h-6" />,
     },
-    { label: "Holders", value: "<1,000", icon: <Users className="w-6 h-6" /> },
   ];
 
   {
@@ -77,27 +76,26 @@ export default function Tokenomics() {
     {
       icon: <Users className="w-8 h-8" />,
       title: "Holder Rewards [TBA]",
-      description:
-        "Percent of every transaction is redistributed to existing holders proportionally to their holdings.",
-      benefit: "Passive income for long-term holders",
+      description: "*More information coming soon!*",
+      benefit: "[TBA]",
     },
     {
       icon: <Lock className="w-8 h-8" />,
-      title: "Staking Rewards",
+      title: "Staking Rewards [TBA]",
       description:
         "Stake your OILX tokens to earn additional rewards and participate in governance decisions.",
-      benefit: "15% APY for staked tokens",
+      benefit: "[TBA]",
     },
     {
       icon: <Target className="w-8 h-8" />,
       title: "Utility Integration",
       description:
-        "OILX tokens are required for accessing premium features and energy trading functionalities.",
-      benefit: "Real-world utility drives demand",
+        "Trading revenues immediately reinvested into the crypto ecosystem to enhance value and bolster the currency's growth.",
+      benefit: "Creates consistent, passive growth for OILX",
     },
   ];
 
-  const vestingSchedule = [
+  /* const vestingSchedule = [
     { category: "Public Sale", unlock: "Immediate", percentage: "100%" },
     { category: "Liquidity Pool", unlock: "Immediate", percentage: "100%" },
     {
@@ -115,7 +113,7 @@ export default function Tokenomics() {
       unlock: "As Needed",
       percentage: "Governance Controlled",
     },
-  ];
+  ]; */
 
   return (
     <div className="py-12">
@@ -124,7 +122,7 @@ export default function Tokenomics() {
         <div className="container mx-auto text-center">
           <div className="max-w-4xl mx-auto">
             <div className="inline-flex items-center bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-2 mb-8">
-              <PieChart className="w-4 h-4 text-amber-400 mr-2" />
+              <Coins className="w-4 h-4 text-amber-400 mr-2" />
               <span className="text-amber-400 text-sm font-medium">
                 OILX Tokenomics
               </span>
@@ -139,8 +137,8 @@ export default function Tokenomics() {
 
             <p className="text-xl text-slate-300 mb-10 leading-relaxed">
               OILX tokenomics are carefully crafted to reward long-term holders,
-              create sustainable value, and drive adoption through real-world
-              utility in energy markets.
+              create sustainable value, and drive adoption through decentralized
+              finance utility in crypto markets.
             </p>
           </div>
         </div>
@@ -158,7 +156,7 @@ export default function Tokenomics() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
             {tokenMetrics.map((metric, index) => (
               <div
                 key={index}
@@ -271,7 +269,7 @@ export default function Tokenomics() {
         </div>
       </section>
 
-      {/* Vesting Schedule */}
+      {/* {/* Vesting Schedule
       <section className="py-20 px-6">
         <div className="container mx-auto">
           <div className="text-center mb-16">
@@ -321,7 +319,7 @@ export default function Tokenomics() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Value Proposition */}
       <section className="py-20 px-6 bg-gradient-to-r from-amber-600/20 to-slate-900/40">
@@ -339,7 +337,7 @@ export default function Tokenomics() {
               <div className="bg-slate-800/50 backdrop-blur-sm border border-amber-500/20 rounded-xl p-6">
                 <BarChart3 className="w-12 h-12 text-amber-400 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-white mb-3">
-                  Deflationary Pressure
+                  Deflationary Pressure [TBA]
                 </h3>
                 <p className="text-slate-300 text-sm">
                   Continuous token burns reduce supply, creating upward pressure
@@ -353,7 +351,7 @@ export default function Tokenomics() {
                   Holder Incentives
                 </h3>
                 <p className="text-slate-300 text-sm">
-                  Automatic rewards and staking benefits encourage long-term
+                  Giveaways and potential staking benefits encourage long-term
                   holding and reduce selling pressure.
                 </p>
               </div>
@@ -364,7 +362,7 @@ export default function Tokenomics() {
                   Real Utility
                 </h3>
                 <p className="text-slate-300 text-sm">
-                  Token utility in energy trading creates genuine demand beyond
+                  Utility in crypto trading creates genuine demand beyond
                   speculation.
                 </p>
               </div>

@@ -72,7 +72,7 @@ export default function Home() {
       icon: <TrendingUp className="w-6 h-6" />,
       title: "Growth Potential",
       description:
-        "Strategic positioning in the expanding energy-crypto intersection with substantial upside potential.",
+        "Strategic positioning in the growing crypto sector with significant upside potential.",
     },
     {
       icon: <Users className="w-6 h-6" />,
@@ -316,21 +316,21 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl font-bold text-white mb-6">
-                Revolutionizing Energy Investment
+                Revolutionizing Crypto Investment
               </h2>
               <p className="text-lg text-slate-300 mb-6 leading-relaxed">
-                OILX represents a paradigm shift in how we approach energy
+                OILX represents a paradigm shift in how we approach crypto
                 investment. By leveraging blockchain technology and
                 decentralized finance principles, we're creating a more
                 accessible, transparent, and efficient way to participate in the
-                global energy market.
+                global crypto market.
               </p>
 
               <div className="space-y-4 mb-8">
                 {[
                   "Deflationary tokenomics with supply reduction",
                   "Governance rights",
-                  "Strategic partnerships with energy companies",
+                  "Potential strategic partnerships with block-chain enterprises",
                 ].map((benefit, index) => (
                   <div key={index} className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
@@ -515,19 +515,16 @@ export default function Home() {
         <div className="container mx-auto text-center">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold text-white mb-6">
-              Ready to Join the Energy Revolution?
+              Ready to Join the Crypto Revolution?
             </h2>
-            <p className="text-xl text-slate-300 mb-8 leading-relaxed">
-              Don't miss your opportunity to be part of the future of energy
-              trading. OILX is positioned for significant growth as we bridge
-              traditional energy markets with DeFi innovation.
-            </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <button className="bg-gradient-to-r from-green-500 to-green-600 text-slate-900 px-10 py-4 rounded-full font-bold text-lg hover:from-amber-400 hover:to-amber-500 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center">
-                Buy OILX Now
-                <ChevronRight className="w-5 h-5 ml-2" />
-              </button>
+              <a target="_blank" href="https://moonshot.com/?ref=CMpjXUTqvY">
+                <button className="bg-gradient-to-r from-green-500 to-green-600 text-slate-900 px-10 py-4 rounded-full font-bold text-lg hover:from-amber-400 hover:to-amber-500 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center">
+                  Buy OILX Now
+                  <ChevronRight className="w-5 h-5 ml-2" />
+                </button>
+              </a>
               <Link
                 to="/community"
                 className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-amber-500 hover:text-slate-900 transition-all duration-200 inline-block"
@@ -537,8 +534,9 @@ export default function Home() {
             </div>
 
             <div className="text-sm text-slate-500">
-              * This is not financial advice. Please do your own research before
-              investing.
+              Disclaimer: This information is not financial advice. We strongly
+              recommend conducting your own thorough research prior to making
+              any investment decisions.
             </div>
           </div>
         </div>
